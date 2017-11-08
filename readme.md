@@ -19,7 +19,7 @@
 
 ### Add a user
 
-To register on the system, send your name, email, password and password_confirmation in a POST request to api/register e.g.
+To register on the system, send your name, email, password and password_confirmation in a POST request to `api/register` e.g.
 
 ```
 $ curl -X POST http://localhost:8000/api/register \
@@ -28,27 +28,27 @@ $ curl -X POST http://localhost:8000/api/register \
  -d '{"name": "Root Beer", "email": "root@beer.com", "password": "crackopenacoldone", "password_confirmation": "crackopenacoldone"}'
  ```
  
- A JSON object will be returned showing the contents of your new user record including an api_token. This token must be used with all future requests. To logout submit a POST request to api/logout, and to login again submit the POST containing your email and password to api/login - this will provide you with a new api_token.
+ A JSON object will be returned showing the contents of your new user record including an api_token. This token must be used with all future requests. To logout submit a POST request to `api/logout`, and to login again submit the POST containing your email and password to `api/login` - this will provide you with a new api_token.
 
 ### Create a new beer
 
-Submit a POST request to api/beers providing the new beer details (name, brewery, style, ibu, calories, abv) as well as your api_token. You will receive a JSON object with the contents of the new record as confirmation if your request is successful, else an error message if not.
+Submit a POST request to `api/beers` providing the new beer details (name, brewery, style, ibu, calories, abv) as well as your api_token. You will receive a JSON object with the contents of the new record as confirmation if your request is successful, else an error message if not.
 
 NOTE: you may only add one beer every 24 hours.
 
 ### List all beers
 
-GET request api/beers?api_token=<token>
+GET request `api/beers?api_token=<token>`
 
 ### Rate a beer
 
-Submit your POST to api/reviews providing name of the beer (`"beer": <name>`) and some/all of the following review scores (aroma, appearance, taste).
+Submit your POST to `api/reviews` providing name of the beer (`"beer": <name>`) and some/all of the following review scores (aroma, appearance, taste).
 
 ### View ratings for a beer
 
-GET request of the form api/reviews/<beer name>?api_token=<token>
+GET request of the form `api/reviews/<beer name>?api_token=<token>`
 
 ### Get overall rating for a beer
 
-GET request of the form api/overall/<beer name>?api_token=<token> - the returned JSON object will contain the count of reviews and the average overall score for the beer.
+GET request of the form `api/overall/<beer name>?api_token=<token>` - the returned JSON object will contain the count of reviews and the average overall score for the beer.
 
