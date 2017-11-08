@@ -1,51 +1,54 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# Welcome to Beer
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+## Requirements
 
-## About Laravel
+1. PHP 5.6
+1. MySQL database
+1. Composer (see https://getcomposer.org/ for installation instructions)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+## Installation instructions
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. download/clone the repository into the project directory (`$ git clone https://github.com/softfrog/beer.git <project_dir>`)
+1. change to the project directory and run `$ composer install`
+1. create your database and run database/sql/create_tables.sql to create the tables
+1. edit your database configuration in config/database.php
+1. run `$ php artisan db:seed` in the project directory to seed the database with some useful values
+1. you can set up the site using your preferred web server, or test by running `$ php artisan serve` in the project directory and direct all requests to http://localhost:8000
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+## To call the API
 
-## Learning Laravel
+### Add a user
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+To register on the system, send your name, email, password and password_confirmation in a POST request to api/register e.g.
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+```
+$ curl -X POST http://localhost:8000/api/register \
+ -H "Accept: application/json" \
+ -H "Content-Type: application/json" \
+ -d '{"name": "Root Beer", "email": "root@beer.com", "password": "crackopenacoldone", "password_confirmation": "crackopenacoldone"}'
+ ```
+ 
+ A JSON object will be returned showing the contents of your new user record including an api_token. This token must be used with all future requests. To logout submit a POST request to api/logout, and to login again submit the POST containing your email and password to api/login - this will provide you with a new api_token.
 
-## Laravel Sponsors
+### Create a new beer
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+Submit a POST request to api/beers providing the new beer details (name, brewery, style, ibu, calories, abv) as well as your api_token. You will receive a JSON object with the contents of the new record as confirmation if your request is successful, else an error message if not.
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
+NOTE: you may only add one beer every 24 hours.
 
-## Contributing
+### List all beers
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+GET request api/beers?api_token=<token>
 
-## Security Vulnerabilities
+### Rate a beer
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+Submit your POST to api/reviews providing name of the beer (`"beer": <name>`) and some/all of the following review scores (aroma, appearance, taste).
 
-## License
+### View ratings for a beer
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+GET request of the form api/reviews/<beer name>?api_token=<token>
+
+### Get overall rating for a beer
+
+GET request of the form api/overall/<beer name>?api_token=<token> - the returned JSON object will contain the count of reviews and the average overall score for the beer.
+
