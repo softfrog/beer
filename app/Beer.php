@@ -41,6 +41,9 @@ class Beer extends Model
      */
     protected $fillable = ['user_id', 'brewery_id', 'style_id', 'name', 'ibu', 'calories', 'abv', 'updated_at', 'created_at'];
 
+    /** @var array Array of accessors to include in the model's array and JSON forms. */
+    protected $appends = array('location');
+
     /** @var array Array of rules used by Eloquent Validator object. */
     public static $rules = array(
         'beer_id'    => 'sometimes|required|integer',
@@ -85,6 +88,16 @@ class Beer extends Model
     public function reviews()
     {
         return $this->hasMany('App\Review', 'beer_id', 'beer_id');
+    }
+
+    /**
+     * Return the beer's location
+     *
+     * @return string
+     */
+    public function getLocationAttribute()
+    {
+        return $this->brewery->location;
     }
 
     /**
