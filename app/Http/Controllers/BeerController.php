@@ -26,12 +26,14 @@ class BeerController extends Controller
 
         //check when last beer was created by user
         $last_created = Beer::where('user_id', $fields['user_id'])->orderby('created_at','desc')->first();
-        $created_at = new \Carbon($last_created->created_at);
-        $difference = $created_at->diffInHours(\Carbon::now());
-        if ($difference < 24) {
-            return response()->json(
-                array('message' => 'Sorry, you can only add one beer per day (part of our responsible drinking program:)'),
-                403);
+        if (!is_null($last_created)) {
+            $created_at = new \Carbon($last_created->created_at);
+            $difference = $created_at->diffInHours(\Carbon::now());
+            if ($difference < 24) {
+                return response()->json(
+                    array('message' => 'Sorry, you can only add one beer per day (part of our responsible drinking program:)'),
+                    403);
+            }
         }
 
         //fill in brewery id (return list of valid if doesn't exist)
